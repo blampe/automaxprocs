@@ -73,6 +73,7 @@ func NewCGroups2ForCurrentProcess() (*CGroups2, error) {
 func newCGroups2From(mountInfoPath, procPathCGroup string) (*CGroups2, error) {
 	isV2, err := isCGroupV2(mountInfoPath)
 	if err != nil {
+		fmt.Println("isCGroupV2", err.Error())
 		return nil, err
 	}
 
@@ -82,6 +83,7 @@ func newCGroups2From(mountInfoPath, procPathCGroup string) (*CGroups2, error) {
 
 	subsystems, err := parseCGroupSubsystems(procPathCGroup)
 	if err != nil {
+		fmt.Println("parseCGroupSubsystems", err.Error())
 		return nil, err
 	}
 
@@ -115,6 +117,7 @@ func isCGroupV2(procPathMountInfo string) (bool, error) {
 	)
 
 	if err := parseMountInfo(procPathMountInfo, newMountPoint); err != nil {
+		fmt.Println("parseMountInfo", err.Error())
 		return false, err
 	}
 
@@ -128,6 +131,7 @@ func isCGroupV2(procPathMountInfo string) (bool, error) {
 func (cg *CGroups2) CPUQuota() (float64, bool, error) {
 	cpuMaxParams, err := os.Open(path.Join(cg.mountPoint, cg.groupPath, cg.cpuMaxFile))
 	if err != nil {
+		fmt.Println("Open", err.Error())
 		if os.IsNotExist(err) {
 			return -1, false, nil
 		}
@@ -135,19 +139,26 @@ func (cg *CGroups2) CPUQuota() (float64, bool, error) {
 	}
 	defer cpuMaxParams.Close()
 
+	dat, _ := os.ReadFile(path.Join(cg.mountPoint, cg.groupPath, cg.cpuMaxFile))
+	fmt.Println(string(dat))
+
 	scanner := bufio.NewScanner(cpuMaxParams)
 	if scanner.Scan() {
 		fields := strings.Fields(scanner.Text())
+		fmt.Println("Saw fields", fields)
 		if len(fields) == 0 || len(fields) > 2 {
+			fmt.Println("invalid format")
 			return -1, false, fmt.Errorf("invalid format")
 		}
 
 		if fields[_cgroupv2CPUMaxQuotaIndex] == _cgroupV2CPUMaxQuotaMax {
+			fmt.Println("max quota index")
 			return -1, false, nil
 		}
 
 		max, err := strconv.Atoi(fields[_cgroupv2CPUMaxQuotaIndex])
 		if err != nil {
+			fmt.Println("Atoi", err.Error())
 			return -1, false, err
 		}
 
@@ -157,6 +168,7 @@ func (cg *CGroups2) CPUQuota() (float64, bool, error) {
 		} else {
 			period, err = strconv.Atoi(fields[_cgroupv2CPUMaxPeriodIndex])
 			if err != nil {
+				fmt.Println("Atoi2", err.Error())
 				return -1, false, err
 			}
 		}
@@ -165,8 +177,10 @@ func (cg *CGroups2) CPUQuota() (float64, bool, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
+		fmt.Println("scanner", err.Error())
 		return -1, false, err
 	}
 
+	fmt.Println("unexpected eof")
 	return 0, false, io.ErrUnexpectedEOF
 }

@@ -20,12 +20,12 @@
 
 // Package automaxprocs automatically sets GOMAXPROCS to match the Linux
 // container CPU quota, if any.
-package automaxprocs // import "go.uber.org/automaxprocs"
+package automaxprocs // import "github.com/blampe/automaxprocs"
 
 import (
 	"log"
 
-	"go.uber.org/automaxprocs/maxprocs"
+	"github.com/blampe/automaxprocs/maxprocs"
 )
 
 func init() {

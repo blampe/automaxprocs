@@ -63,6 +63,24 @@ func TestNewCGroupSubsysFromLine(t *testing.T) {
 				Name:       "/system.slice/containerd.service/kubepods-besteffort-podb41662f7_b03a_4c65_8ef9_6e4e55c3cf27.slice:cri-containerd:1753b7cbbf62734d812936961224d5bc0cf8f45214e0d5cdd1a781a053e7c48f",
 			},
 		},
+		{
+			name: "ecs-subsys",
+			line: "3:cpuset:/ecs/c53c6a0410f247de8ba7fa103824c535/fda3d4c46094930deea359e825bd9637921fe2f73622d96340ee6ebe97aaf427",
+			expectedSubsys: &CGroupSubsys{
+				ID:         3,
+				Subsystems: []string{"cpu"},
+				Name:       "/ecs/c53c6a0410f247de8ba7fa103824c535/fda3d4c46094930deea359e825bd9637921fe2f73622d96340ee6ebe97aaf427",
+			},
+		},
+		{
+			name: "ecs-multi-subsys",
+			line: "12:cpu,cpuacct:/ecs/c53c6a0410f247de8ba7fa103824c535/fda3d4c46094930deea359e825bd9637921fe2f73622d96340ee6ebe97aaf427",
+			expectedSubsys: &CGroupSubsys{
+				ID:         12,
+				Subsystems: []string{"cpu", "cpuacct"},
+				Name:       "/ecs/c53c6a0410f247de8ba7fa103824c535/fda3d4c46094930deea359e825bd9637921fe2f73622d96340ee6ebe97aaf427",
+			},
+		},
 	}
 
 	for _, tt := range testTable {

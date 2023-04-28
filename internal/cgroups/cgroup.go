@@ -25,6 +25,7 @@ package cgroups
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -54,6 +55,7 @@ func (cg *CGroup) ParamPath(param string) string {
 // readFirstLine reads the first line from a cgroup param file.
 func (cg *CGroup) readFirstLine(param string) (string, error) {
 	paramFile, err := os.Open(cg.ParamPath(param))
+	fmt.Println("Reading first line", cg.ParamPath(param))
 	if err != nil {
 		return "", err
 	}
@@ -73,7 +75,9 @@ func (cg *CGroup) readFirstLine(param string) (string, error) {
 func (cg *CGroup) readInt(param string) (int, error) {
 	text, err := cg.readFirstLine(param)
 	if err != nil {
+		fmt.Println("readFirstLine", err.Error())
 		return 0, err
 	}
+	fmt.Println("Parsing", text, "as int")
 	return strconv.Atoi(text)
 }

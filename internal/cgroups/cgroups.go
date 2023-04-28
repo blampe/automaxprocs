@@ -23,6 +23,8 @@
 
 package cgroups
 
+import "fmt"
+
 const (
 	// _cgroupFSType is the Linux CGroup file system type used in
 	// `/proc/$PID/mountinfo`.
@@ -101,16 +103,24 @@ func NewCGroupsForCurrentProcess() (CGroups, error) {
 func (cg CGroups) CPUQuota() (float64, bool, error) {
 	cpuCGroup, exists := cg[_cgroupSubsysCPU]
 	if !exists {
+		fmt.Println("v1 cpu subsys", cg)
 		return -1, false, nil
 	}
 
 	cfsQuotaUs, err := cpuCGroup.readInt(_cgroupCPUCFSQuotaUsParam)
 	if defined := cfsQuotaUs > 0; err != nil || !defined {
+		if err != nil {
+			fmt.Println("v1 readInt", err.Error())
+		} else {
+			fmt.Println("v1 undefined")
+			fmt.Println("cfsQuotaUs", _cgroupCPUCFSQuotaUsParam)
+		}
 		return -1, defined, err
 	}
 
 	cfsPeriodUs, err := cpuCGroup.readInt(_cgroupCPUCFSPeriodUsParam)
 	if err != nil {
+		fmt.Println("v1 cfs period", err.Error())
 		return -1, false, err
 	}
 

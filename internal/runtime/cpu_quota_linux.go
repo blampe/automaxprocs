@@ -25,9 +25,10 @@ package runtime
 
 import (
 	"errors"
+	"fmt"
 	"math"
 
-	cg "go.uber.org/automaxprocs/internal/cgroups"
+	cg "github.com/blampe/automaxprocs/internal/cgroups"
 )
 
 // CPUQuotaToGOMAXPROCS converts the CPU quota applied to the calling process
@@ -35,11 +36,18 @@ import (
 func CPUQuotaToGOMAXPROCS(minValue int) (int, CPUQuotaStatus, error) {
 	cgroups, err := newQueryer()
 	if err != nil {
+		fmt.Println("newQueryer", err.Error())
 		return -1, CPUQuotaUndefined, err
 	}
 
 	quota, defined, err := cgroups.CPUQuota()
 	if !defined || err != nil {
+		fmt.Println("CPUQuota")
+		if err != nil {
+			fmt.Println("err", err.Error())
+		} else {
+			fmt.Println("undefined")
+		}
 		return -1, CPUQuotaUndefined, err
 	}
 

@@ -1,4 +1,4 @@
-module go.uber.org/automaxprocs
+module github.com/blampe/automaxprocs
 
 go 1.18
 

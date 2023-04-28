@@ -25,6 +25,7 @@ package cgroups
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -54,6 +55,7 @@ type CGroupSubsys struct {
 // the format of `/proc/$PID/cgroup`
 func NewCGroupSubsysFromLine(line string) (*CGroupSubsys, error) {
 	fields := strings.SplitN(line, _cgroupSep, _csFieldCount)
+	fmt.Println("saw fields", fields)
 
 	if len(fields) != _csFieldCount {
 		return nil, cgroupSubsysFormatInvalidError{line}

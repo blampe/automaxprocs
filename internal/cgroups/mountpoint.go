@@ -109,7 +109,7 @@ func NewMountPointFromLine(line string) (*MountPoint, error) {
 				MountID:        mountID,
 				ParentID:       parentID,
 				DeviceID:       fields[_miFieldIDDeviceID],
-				Root:           fields[_miFieldIDRoot],
+				Root:           "/",
 				MountPoint:     fields[_miFieldIDMountPoint],
 				Options:        strings.Split(fields[_miFieldIDOptions], _mountInfoOptsSep),
 				OptionalFields: fields[_miFieldIDOptionalFields:(fsTypeStart - 1)],
